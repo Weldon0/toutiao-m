@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     👌🏻
-    <h2>app组件</h2>
+    <h2>app组件2</h2>
     <router-view />
   </div>
 </template>
