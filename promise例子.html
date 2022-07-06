@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+  // 账号:hzhmqd密码:123456
+  // const a = new Promise((resolve, reject) => {
+  //   setTimeout(() => {
+  //     resolve("正确了");
+  //   }, 1000);
+  // });
+  //
+  // a.then(v => v, err => {
+  //   console.log(err);
+  // }).then(res => {
+  //   console.log(res);
+  // })
+
+  // a.then(res => {
+  //   console.log(res);
+  // }, err => {
+  //   console.log("promise error");
+  //   // return Promise.reject('失败了')
+  // }).then(null, err => {
+  //   console.log(err);
+  // })
+
+
+  // v => v
+  // a.then(null, err => {
+  //   throw err
+  // }).catch(err => {
+  //   console.log("catch error"); // 会走 不会走
+  //   console.log(err);
+  // });
+
+  //   链式调用 >> 下一次then的执行取决于上一次then执行之后返回的结果(代码内部是否出错)
+  // Promise() 类/构造函数
+
+
+  //  静态方法
+  //
+
+  class P {
+
+  }
+
+  // 只能通过构造函数或者类去访问
+  P.get = function() {
+  };
+
+  // Promise.all
+  // Promise.race
+  // Promise.resolve
+  // Promise.reject
+
+  //  Array
+  //   Array.isArray
+  // push ?
+
+  const a = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("正确了1");
+    }, 1000);
+  });
+
+  const b = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("正确了2");
+    }, 1000);
+  });
+
+  const c = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("正确了3");
+    }, 1000);
+  });
+
+  Promise.all([a, b, c, 1, Promise.resolve(1)]).then(res => {
+    console.log(res); // ? 每一个promise成功的值，并且按照传入的顺序组织的
+  }, err => {
+    console.log(err);
+  })
+
+  // xhr.abort() 请求只能手动终止
+
+
+  // Promise.all([a, b, c]).then(res => {
+  //   console.log(res); // ? 每一个promise成功的值，并且按照传入的顺序组织的
+  // }, err => {
+  //   console.log(err);
+  // })
+
+//   all >> 所有的promise成功之后才走成功,成功的结果组成的数组列表 >> 顺序
+//           只要有一个个报错，走错误
+//  如果all方法里面是接口请求，如果有一个报错了，其余的都会继续请求完成
+//  我们在代码能不能获取到成功的结果
+
+
+  // Promise.race([])
+
+// 不管你成功或者失败，我都要拿到结果
+//  成功 >> 成功的值
+//  失败 >> 失败的原因
+
+  Promise.allSettled([a, b, c, Promise.reject('end')]).then(res => {
+    console.log(res);
+  })
+// Promise.all
+// catch怎么捕获错误的
+</script>
+</body>
+</html>
