@@ -1,6 +1,16 @@
 <template>
   <div class="login-container">
-    <van-nav-bar title="登录" />
+    <!--    <van-button @click"">点击</van-button>-->
+    <van-nav-bar title="登录">
+      <template #left>
+        <van-icon @click="$router.back()" color="red" name="like" />
+        <!--        <ToutiaoIcon-->
+        <!--          @click.native="$router.back()"-->
+        <!--          style="color: white"-->
+        <!--          icon="guanbi"-->
+        <!--        />-->
+      </template>
+    </van-nav-bar>
     <van-form @submit="onSubmit" ref="form">
       <van-field
         name="mobile"
@@ -116,11 +126,15 @@ export default {
       // 如果捕获await的错误，用try catch
       try {
         const res = await login(this.user);
-        console.log(res);
+        // 登录成功以后获取的数据存储到vuex和本地存储当中
+        this.$store.commit("setUser", res.data.data);
         //  >> 登录成功 提示用户
         // Toast.success("登录成功");
-        // Toast === this.$toast
+        // Toast = this.$toast
         this.$toast("登录成功");
+
+        //  跳转首页
+        this.$router.push("/");
       } catch (e) {
         // e >> 错误对象信息
         // if (e && e.response && e.response.data && e.response.data.message) {
@@ -163,7 +177,6 @@ export default {
       } catch (e) {
         // 如果获取失败了，进行错误的提示
         this.$toast.fail(e?.response?.data?.message || "出错了");
-        this.isShowCountDown = false;
       } finally {
         // 不管成功或者失败都会执行的逻辑
         this.isDisabled = false;

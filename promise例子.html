@@ -9,6 +9,17 @@
 </head>
 <body>
 <script>
+  /**
+   *  静态方法：类或者构造函数自身的方法(只能通过类或者构造函数去访问)
+   *  1、链式调用 >> 下一次then的执行取决于上一次then执行之后返回的结果(代码内部是否出错)
+   *     catch和then一样，只不过没有第一个成功的回调
+   *     如果all方法里面是接口请求，如果有一个报错了，其余的都会继续请求完成
+   *     我们在代码能不能获取到成功的结果
+   *  2、all >> 所有的promise成功之后才走成功,成功的结果组成的数组列表 >> 按照顺序组织
+   *  3、race >> 以最快的作为结果
+   *  4、allSettled >> 无论成功或者失败都可以获取到结果
+   */
+
   // 账号:hzhmqd密码:123456
   // const a = new Promise((resolve, reject) => {
   //   setTimeout(() => {
@@ -41,28 +52,7 @@
   // });
 
   //   链式调用 >> 下一次then的执行取决于上一次then执行之后返回的结果(代码内部是否出错)
-  // Promise() 类/构造函数
 
-
-  //  静态方法
-  //
-
-  class P {
-
-  }
-
-  // 只能通过构造函数或者类去访问
-  P.get = function() {
-  };
-
-  // Promise.all
-  // Promise.race
-  // Promise.resolve
-  // Promise.reject
-
-  //  Array
-  //   Array.isArray
-  // push ?
 
   const a = new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -88,32 +78,16 @@
     console.log(err);
   })
 
-  // xhr.abort() 请求只能手动终止
 
-
-  // Promise.all([a, b, c]).then(res => {
-  //   console.log(res); // ? 每一个promise成功的值，并且按照传入的顺序组织的
-  // }, err => {
-  //   console.log(err);
-  // })
-
-//   all >> 所有的promise成功之后才走成功,成功的结果组成的数组列表 >> 顺序
-//           只要有一个个报错，走错误
-//  如果all方法里面是接口请求，如果有一个报错了，其余的都会继续请求完成
-//  我们在代码能不能获取到成功的结果
-
-
-  // Promise.race([])
-
-// 不管你成功或者失败，我都要拿到结果
-//  成功 >> 成功的值
-//  失败 >> 失败的原因
 
   Promise.allSettled([a, b, c, Promise.reject('end')]).then(res => {
     console.log(res);
   })
-// Promise.all
-// catch怎么捕获错误的
+
+
+
+
+
 </script>
 </body>
 </html>

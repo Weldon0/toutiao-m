@@ -21,6 +21,32 @@ const routes = [
     component: () => import("@/views/Login/index.vue"),
     name: "Login",
   },
+  {
+    path: "/demo",
+    component: () => import("@/views/demo.vue"),
+  },
+  {
+    path: "/",
+    component: () => import("@/views/layout/index.vue"),
+    children: [
+      {
+        path: "home",
+        component: () => import("@/views/home/index.vue"),
+      },
+      {
+        path: "qa",
+        component: () => import("@/views/qa/index.vue"),
+      },
+      {
+        path: "video",
+        component: () => import("@/views/video/index.vue"),
+      },
+      {
+        path: "my",
+        component: () => import("@/views/my/index.vue"),
+      },
+    ],
+  },
 ];
 
 // 登录的组件和路由

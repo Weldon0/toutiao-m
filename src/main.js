@@ -11,12 +11,6 @@ import "vant/lib/index.less";
 // 引入flexbie插件
 import "amfe-flexible";
 
-// 测试一下接口是否可用
-import request from "@/utils/request";
-request.get("/v1_0/channels").then((res) => {
-  console.log(res.data.data.channels);
-});
-
 // request.post("url");
 // request({
 //   method: "GET",
