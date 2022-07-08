@@ -1,5 +1,5 @@
 <template>
-  <div class="demo"><i :class="['toutiao', `toutiao-${icon}`]"></i></div>
+  <i :class="['toutiao', `toutiao-${icon}`]"></i>
 </template>
 
 <script>
@@ -11,3 +11,5 @@ export default {
   },
 };
 </script>
+
+<style></style>

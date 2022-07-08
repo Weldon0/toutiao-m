@@ -32,6 +32,8 @@ import ToutiaoIcon from "@/components/ToutiaoIcon";
 Vue.component("ToutiaoIcon", ToutiaoIcon);
 Vue.config.productionTip = false;
 
+// Vue.prototype.$store = store
+// Vue.prototype.$toast = Toast
 new Vue({
   router,
   store,

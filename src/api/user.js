@@ -18,3 +18,16 @@ export const getSmsCode = (mobile) => {
     url: `/v1_0/sms/codes/${mobile}`,
   });
 };
+
+// 需求：获取用户资料
+//    my/index.vue 封装请求的方法，created钩子内部进行调用
+// 接口 >> 需要权限
+// headers: { Authorization: 'Bearer token'}
+
+// 获取用户信息接口
+export const fetchUserInfo = () => {
+  return request({
+    method: "GET",
+    url: "/v1_0/user",
+  });
+};

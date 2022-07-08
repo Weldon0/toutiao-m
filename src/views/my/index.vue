@@ -30,19 +30,19 @@
       <!-- 粉丝、关注 -->
       <div class="data">
         <div class="data-item">
-          <span>90</span>
+          <span>{{ userInfo.art_count }}</span>
           <span>头条</span>
         </div>
         <div class="data-item">
-          <span>90</span>
+          <span>{{ userInfo.follow_count }}</span>
           <span>关注</span>
         </div>
         <div class="data-item">
-          <span>90</span>
+          <span>{{ userInfo.fans_count }}</span>
           <span>粉丝</span>
         </div>
         <div class="data-item">
-          <span>90</span>
+          <span>{{ userInfo.like_count }}</span>
           <span>获赞</span>
         </div>
       </div>
@@ -85,18 +85,29 @@
 
 <script>
 import { mapState } from "vuex";
+import { fetchUserInfo } from "@/api/user";
 export default {
   name: "MyIndex",
   components: {},
   props: {},
   data() {
-    return {};
+    return {
+      /**
+       * @type {UserInfo.Data}
+       */
+      userInfo: {},
+    };
   },
   computed: {
     ...mapState(["user"]),
   },
   watch: {},
-  created() {},
+  created() {
+    // 判断，存在token的时候再去请求接口
+    if (this.$store.state?.user?.token) {
+      this.getUserInfo();
+    }
+  },
   mounted() {},
   methods: {
     async logOut() {
@@ -105,6 +116,17 @@ export default {
         message: "确认退出？",
       });
       this.$store.commit("setUser", null);
+    },
+    // 获取用户信息的方法
+    // created里面可以拿到data里面的数据了
+    // mounted里面可以获取到dom结构
+    async getUserInfo() {
+      try {
+        const res = await fetchUserInfo(); // 成功
+        this.userInfo = res.data.data;
+      } catch (e) {
+        console.log(e);
+      }
     },
   },
 };
