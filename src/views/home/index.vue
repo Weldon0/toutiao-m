@@ -20,24 +20,46 @@
       </van-tab>
       <template #nav-right>
         <div class="placeholder"></div>
-        <div class="hamburger-btn">
+        <div class="hamburger-btn" @click="showPopup = true">
           <ToutiaoIcon icon="gengduo" />
         </div>
       </template>
     </van-tabs>
+
+    <!--弹层结构-->
+    <van-popup
+      close-icon-position="top-left"
+      closeable
+      style="height: 90%"
+      position="bottom"
+      v-model="showPopup"
+    >
+      <ChannelEdit
+        @changeActive="changeActive"
+        :active="active"
+        :userChannels="userChannels"
+      />
+    </van-popup>
   </div>
 </template>
 
 <script>
 import { getUserChannels } from "@/api/channel";
 import ArticleList from "@/views/home/components/article-list";
+import ChannelEdit from "@/views/home/components/channel-edit";
+// computed
+// watch
+// 的区别
+
+// 数组index修改了数组 >> 界面会不会更新？
 
 export default {
   name: "HomePage",
-  components: { ArticleList },
+  components: { ChannelEdit, ArticleList },
   props: {},
   data() {
     return {
+      showPopup: false,
       active: 0,
       /**
        * @type {{name: string, id: string}[]}
@@ -54,9 +76,16 @@ export default {
   watch: {},
   created() {
     this.handleGetUserChannel();
+    this.list.name = "2";
   },
   mounted() {},
   methods: {
+    // 修改active值的方法
+    changeActive(index, status) {
+      this.active = index;
+      //  弹层关闭
+      this.showPopup = status;
+    },
     // 获取用户频道数据
     async handleGetUserChannel() {
       const res = await getUserChannels();

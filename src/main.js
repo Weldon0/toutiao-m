@@ -11,6 +11,9 @@ import "vant/lib/index.less";
 // 引入flexbie插件
 import "amfe-flexible";
 
+// 引入dayjs的配置文件
+import "@/utils/dayjs";
+
 // request.post("url");
 // request({
 //   method: "GET",

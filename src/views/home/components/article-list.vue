@@ -34,11 +34,12 @@
         :error.sync="error"
         error-text="出错了，点击重新加载~"
       >
-        <van-cell
-          v-for="(item, index) in list"
-          :key="index"
-          :title="item.title"
-        />
+        <ArticleItem :article="item" v-for="item in list" :key="item.art_id" />
+        <!--        <van-cell-->
+        <!--          v-for="(item, index) in list"-->
+        <!--          :key="index"-->
+        <!--          :title="item.title"-->
+        <!--        />-->
       </van-list>
     </van-pull-refresh>
   </div>
@@ -46,11 +47,16 @@
 
 <script>
 import { fetchArticle } from "@/api/article";
+import ArticleItem from "@/components/article-item";
 
 export default {
   name: "ArticleList",
+  components: { ArticleItem },
   data() {
     return {
+      /**
+       * @type {ArticleList.Result[]}
+       */
       list: [],
       loading: false,
       finished: false,
@@ -94,22 +100,33 @@ export default {
       }
     },
     async onRefresh() {
-      // 请求数据
-      // onRefresh事件触发默认会把loading >> true
-      // 请求完毕以后需要手动refreshLoading >> false
-      const res = await fetchArticle({
-        channel_id: this.channel.id, // 文章列表对应的频道id
-        timestamp: Date.now(), // 时间戳首次请求为当前时间戳
-        with_top: 1, // 写死1
-      });
-      // 数据更新到现有数据前面
-      this.list = [...res.data.data.results, ...this.list];
-      this.refreshLoading = false;
-      // 手动修改请求成功的提示文案
-      this.successText = `更新了${res.data.data.results.length}条数据`;
+      try {
+        // 请求数据
+        // onRefresh事件触发默认会把loading >> true
+        // 请求完毕以后需要手动refreshLoading >> false
+        const res = await fetchArticle({
+          channel_id: this.channel.id, // 文章列表对应的频道id
+          timestamp: Date.now(), // 时间戳首次请求为当前时间戳
+          with_top: 1, // 写死1
+        });
+        // 数据更新到现有数据前面
+        this.list = [...res.data.data.results, ...this.list];
+        this.refreshLoading = false;
+        // 手动修改请求成功的提示文案
+        this.successText = `更新了${res.data.data.results.length}条数据`;
+      } catch (e) {
+        // 如果请求失败，给用户提示
+        this.refreshLoading = false;
+        this.$toast.fail("请求失败");
+      }
     },
   },
 };
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.article-list {
+  height: 79vh;
+  overflow: auto;
+}
+</style>

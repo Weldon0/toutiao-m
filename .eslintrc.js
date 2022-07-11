@@ -17,5 +17,6 @@ module.exports = {
     "prettier/prettier": ["error", { endOfLine: "auto" }],
     "vue/multi-word-component-names": 0,
     "valid-typeof": 0,
+    "vue/no-mutating-props": 0,
   },
 };

@@ -27,6 +27,7 @@
       <!--  type: 指定输入框的类型 -->
       <!--  maxlength: 指定输入的最大位数 -->
       <!--  required: 是否显示必填的※ -->
+
       <van-field
         v-model="user.code"
         name="code"
@@ -61,6 +62,7 @@
       </van-field>
       <div style="margin: 16px">
         <van-button block type="info" native-type="submit">登录</van-button>
+        <van-button block type="info" native-type="reset">重置</van-button>
       </div>
     </van-form>
   </div>
