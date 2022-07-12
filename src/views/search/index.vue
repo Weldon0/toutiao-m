@@ -12,7 +12,7 @@
     </form>
 
     <!--搜索结果页面-->
-    <SearchResult :searchText="searchText" v-if="isShowResult" />
+    <SearchResult name="aa" :searchText="searchText" v-if="isShowResult" />
     <!--搜索建议列表组件-->
     <SearchSuggestion
       @onSearch="onSearch"
@@ -20,7 +20,7 @@
       v-else-if="searchText"
     />
     <!--搜索历史组件-->
-    <SearchHistory v-else />
+    <SearchHistory v-else :searchHistories="searchHistories" />
   </div>
 </template>
 
@@ -36,6 +36,7 @@ export default {
     return {
       searchText: "",
       isShowResult: false, // 是否展示搜索结果页面
+      searchHistories: [], // 搜索历史列表
     };
   },
   computed: {},
@@ -48,7 +49,15 @@ export default {
       // 按下回车 >> 搜索结果
       console.log("开始搜索");
       this.searchText = value;
+      // 搜索结果页面展示
       this.isShowResult = true;
+      // 添加之前，先判断value是否已经在搜索历史列表里面
+      const index = this.searchHistories.indexOf(value); // index = -1 不存在
+      if (index !== -1) {
+        // 找到的这项删除
+        this.searchHistories.splice(index, 1);
+      }
+      this.searchHistories.unshift(value);
     },
     onCancel() {
       console.log("点击了取消");

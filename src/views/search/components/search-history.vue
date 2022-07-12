@@ -8,18 +8,25 @@
       </template>
     </van-cell>
 
-    <van-cell title="我是历史记录">
+    <van-cell
+      :title="item"
+      v-for="(item, index) in searchHistories"
+      :key="index"
+    >
       <template #default> <van-icon name="clear"></van-icon></template>
     </van-cell>
-    <van-cell title="我是历史记录">
-      <template #default> <van-icon name="clear"></van-icon></template>
-    </van-cell>
+    <!--    <van-cell title="我是历史记录">-->
+    <!--      <template #default> <van-icon name="clear"></van-icon></template>-->
+    <!--    </van-cell>-->
   </div>
 </template>
 
 <script>
 export default {
   name: "SearchHistory",
+  props: {
+    searchHistories: Array,
+  },
 };
 </script>
 

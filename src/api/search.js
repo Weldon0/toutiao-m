@@ -12,3 +12,14 @@ export const getSearchSuggestion = (q) => {
     },
   });
 };
+
+/**
+ * 获取搜索结果
+ */
+export function getSearch(params) {
+  return request({
+    method: "GET",
+    url: "/v1_0/search",
+    params,
+  });
+}
