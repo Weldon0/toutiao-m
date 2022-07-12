@@ -20,7 +20,12 @@
       v-else-if="searchText"
     />
     <!--搜索历史组件-->
-    <SearchHistory v-else :searchHistories="searchHistories" />
+    <SearchHistory
+      @deleteAll="searchHistories = []"
+      @onSearch="onSearch"
+      v-else
+      :searchHistories="searchHistories"
+    />
   </div>
 </template>
 
@@ -28,6 +33,8 @@
 import SearchHistory from "@/views/search/components/search-history";
 import SearchSuggestion from "@/views/search/components/search-suggestion";
 import SearchResult from "@/views/search/components/search-result";
+import { getLocal, setLocal } from "@/utils/storage";
+import { HISTORYKEY } from "@/constants";
 export default {
   name: "SearchPage",
   components: { SearchResult, SearchSuggestion, SearchHistory },
@@ -36,11 +43,19 @@ export default {
     return {
       searchText: "",
       isShowResult: false, // 是否展示搜索结果页面
-      searchHistories: [], // 搜索历史列表
+      searchHistories: getLocal(HISTORYKEY) || [], // 搜索历史列表
     };
   },
   computed: {},
-  watch: {},
+  watch: {
+    // 搜索历史持久化
+    // 监听了搜索历史记录数据的变化
+    // 发生了变化的时候，把最新的数据存到本地存储
+    // 注意：获取默认值的时候，从本地存储获取数据
+    searchHistories(val) {
+      setLocal(HISTORYKEY, val);
+    },
+  },
   created() {},
   methods: {
     onSearch(value) {
@@ -61,6 +76,7 @@ export default {
     },
     onCancel() {
       console.log("点击了取消");
+      this.$router.push("/home");
     },
   },
 };

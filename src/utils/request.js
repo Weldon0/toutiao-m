@@ -32,6 +32,9 @@ request.interceptors.request.use(
     return Promise.reject(err);
   }
 );
+// 后端如果给你返回了超出精度的数字 >> 浏览器没法解析
+
+// JSON.parse
 request.interceptors.response.use(); // 响应拦截器
 
 // url: 'v1_0/channels'
