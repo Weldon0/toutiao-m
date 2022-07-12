@@ -8,6 +8,7 @@ import store from "@/store";
 // 但是集成了一些配置项
 const request = axios.create({
   baseURL: "http://42.192.129.12:8000/",
+  // baseURL: "http://toutiao.itheima.net",
 });
 
 // 设置请求拦截器

@@ -53,9 +53,16 @@
 <script>
 // 出效果 ？
 
-import { fetchAllChannels } from "@/api/channel";
+import {
+  deleteUserChannel,
+  fetchAddChannel,
+  fetchAllChannels,
+} from "@/api/channel";
 import differenceBy from "lodash/differenceBy";
 import { Notify } from "vant";
+import { mapState } from "vuex";
+import { setLocal } from "@/utils/storage";
+import { USERCHANNELKEY } from "@/constants";
 
 export default {
   name: "ChannelEdit",
@@ -80,6 +87,16 @@ export default {
       // 不要进行任何的异步操作
       return differenceBy(this.allChannels, this.userChannels, "id");
     },
+    ...mapState(["user"]), // this.$store.state.user
+    // user: function () {
+    //   return this.$store.state.user;
+    // },
+    // count: function () {
+    //   return this.$store.state.count;
+    // },
+    // user() {
+    //   return this.$store.state.user;
+    // },
     // recommendChannels() {
     //   // 从所有的频道数据里面，找到我的频道数据 >> 过滤掉
     //   return this.allChannels.filter((item) => {
@@ -96,8 +113,22 @@ export default {
     this.getAllChannels();
   },
   methods: {
+    async deleteChannel(channel) {
+      // 想要删除的频道项
+      try {
+        if (this.user) {
+          //  从接口删除
+          await deleteUserChannel(channel.id);
+        } else {
+          //  修改之后的数据存储到本地存储
+          setLocal(USERCHANNELKEY, this.userChannels);
+        }
+        this.$toast("删除成功");
+      } catch (e) {
+        this.$toast("删除失败");
+      }
+    },
     onMyChannelClick(channel, index) {
-      // console.log(channel, index);
       //   1、判断是否处于编辑状态
       if (this.isEdit) {
         // 出于编辑状态
@@ -106,7 +137,10 @@ export default {
           // 如果index小于选中项 >> 手动让选中项 - 1
           this.$emit("changeActive", this.active - 1, true);
         }
+        // 从代码里面删除了数组的某一项
         this.userChannels.splice(index, 1);
+        //  持久化
+        this.deleteChannel(channel);
       } else {
         // 非编辑状态
         // >> 1、切换
@@ -114,9 +148,30 @@ export default {
         this.$emit("changeActive", index, false);
       }
     },
-    addChannel(channel) {
+    async addChannel(channel) {
       // 子组件不允许修改父组件的数据
       this.userChannels.push(channel);
+      //  持久化
+      //  本地存储 >> 未登录
+      //  线上服务器 >> 已登录
+      //  判断是否登录 >> token >> vuex里面取值
+      if (this.user) {
+        try {
+          //  已经登录了 >> 请求接口添加频道
+          await fetchAddChannel({
+            id: channel.id,
+            seq: this.userChannels.length,
+          });
+          // >> 如果添加成功进行成功的提示
+          this.$toast("添加频道成功");
+        } catch (e) {
+          this.$toast("添加失败");
+        }
+      } else {
+        //  未登录
+        // 修改之后的个人频道数据存储到本地存储
+        setLocal(USERCHANNELKEY, this.userChannels);
+      }
     },
     async getAllChannels() {
       const res = await fetchAllChannels();

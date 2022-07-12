@@ -9,6 +9,7 @@
           size="small"
           type="info"
           round
+          to="/search"
           >搜索
         </van-button>
       </template>
@@ -47,6 +48,8 @@
 import { getUserChannels } from "@/api/channel";
 import ArticleList from "@/views/home/components/article-list";
 import ChannelEdit from "@/views/home/components/channel-edit";
+import { USERCHANNELKEY } from "@/constants";
+import { getLocal } from "@/utils/storage";
 // computed
 // watch
 // 的区别
@@ -88,8 +91,24 @@ export default {
     },
     // 获取用户频道数据
     async handleGetUserChannel() {
-      const res = await getUserChannels();
-      this.userChannels = res.data.data.channels;
+      // 如果用户登陆 | 本地没有数据 >> 接口
+      // 其他 > 本地存储
+      // const res = await getUserChannels();
+      // this.userChannels = res.data.data.channels;
+      try {
+        // 获取用户token
+        const token = this.$store.state.user?.token;
+        // 获取本地存储频道数据
+        let channels = getLocal(USERCHANNELKEY);
+        if (token || !channels) {
+          const res = await getUserChannels();
+          channels = res.data.data.channels;
+        }
+        this.userChannels = channels;
+      } catch (e) {
+        // console.log(e);
+        this.$toast("获取频道数据失败");
+      }
     },
   },
 };

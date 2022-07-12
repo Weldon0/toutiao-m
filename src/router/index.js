@@ -47,6 +47,10 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/search",
+    component: () => import("@/views/search/index.vue"),
+  },
 ];
 
 // 登录的组件和路由
