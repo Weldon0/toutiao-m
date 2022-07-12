@@ -11,13 +11,13 @@
 
     <div class="main-wrap">
       <!-- 加载中 -->
-      <div class="loading-wrap">
+      <div class="loading-wrap" v-if="loading">
         <van-loading color="#3296fa" vertical>加载中</van-loading>
       </div>
       <!-- /加载中 -->
 
       <!-- 加载完成-文章详情 -->
-      <div class="article-detail">
+      <div class="article-detail" v-else-if="article.art_id">
         <!-- 文章标题 -->
         <h1 class="article-title">{{ article.title }}</h1>
         <!-- /文章标题 -->
@@ -112,7 +112,8 @@ export default {
       /**
        * @type {ArticleDetail.Data}
        */
-      article: {},
+      loading: false,
+      article: {}, // 文章对象
     };
   },
   computed: {},
@@ -123,9 +124,15 @@ export default {
   mounted() {},
   methods: {
     async getArticleDetail() {
-      const res = await getArticleById(this.articleId);
-      console.log(res);
-      this.article = res.data.data;
+      this.loading = true;
+      try {
+        const res = await getArticleById(this.articleId);
+        this.article = res.data.data;
+        this.loading = false;
+      } catch (e) {
+        console.log(e);
+        this.loading = false;
+      }
     },
   },
 };

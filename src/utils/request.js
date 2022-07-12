@@ -54,6 +54,10 @@ request.get("http://localhost:3000/name").then((res) => {
   console.log(res);
 });
 
+// app.get("/list", (res, err) => {
+//   res.send({});
+// });
+
 export default request;
 
 // 安装json-server >> yarn add json-server -D
