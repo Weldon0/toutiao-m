@@ -22,6 +22,7 @@ module.exports = {
         return arg.file.includes("vant") ? 37.5 : 75;
       },
       propList: ["*"],
+      exclude: "github-markdown", // 增加这一句！
     },
   },
 };

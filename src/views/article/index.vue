@@ -36,24 +36,30 @@
             {{ article.pubdate | relativeTime }}
           </div>
           <van-button
+            v-if="!article.is_followed"
             class="follow-btn"
             type="info"
             color="#3296fa"
             round
             size="small"
             icon="plus"
+            @click="follow"
             >关注
           </van-button>
-          <!-- <van-button
+          <van-button
+            @click="follow"
+            v-else
             class="follow-btn"
             round
             size="small"
-          >已关注</van-button> -->
+            >已关注</van-button
+          >
         </van-cell>
         <!-- /用户信息 -->
 
         <!-- 文章内容 -->
         <div
+          ref="content"
           class="article-content markdown-body"
           v-html="article.content"
         ></div>
@@ -84,8 +90,8 @@
         <van-icon name="failure" />
         <p class="text">内容加载失败！</p>
         <van-button class="retry-btn" @click="getArticleDetail"
-          >点击重试</van-button
-        >
+          >点击重试
+        </van-button>
       </div>
       <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
     </div>
@@ -94,15 +100,16 @@
 
 <script>
 import { getArticleById } from "@/api/article";
-import JSONBig from "json-bigint";
 // 引入美化markdown的样式文件
 import "github-markdown-css";
+import { ImagePreview } from "vant";
+import { addFollow, deleteFollow } from "@/api/user";
 
-const jsonStr = '{"name": 9007199254740999, "age": "200"}'; // 直接json.parse  >> 失去精度
-const res = JSONBig.parse(jsonStr);
-console.log(JSONBig.stringify(res));
-// console.log(res);
-// json里面的大数字 >> BigNumber对象 >> 使用的时候调用toString()
+// yarn add github-markdown-css -S
+// 当前文件通过import 'github-markdown-css' 引入 >> 不需要加路径
+// 内容添加类名 markdown-body
+
+// 重启一下
 
 export default {
   name: "ArticleIndex",
@@ -131,17 +138,83 @@ export default {
   },
   mounted() {},
   methods: {
+    async follow() {
+      try {
+        // 调用接口，关注/取消关注 当前作者
+        if (this.article.is_followed) {
+          //  取消关注
+          await deleteFollow(this.article.aut_id);
+        } else {
+          //  去关注
+          await addFollow(this.article.aut_id);
+        }
+        // 让当前关注的状态取反 >> 界面响应式更新
+        this.article.is_followed = !this.article.is_followed;
+        // 关注之后进行提示
+        this.$notify({
+          type: "success",
+          message: this.article.is_followed ? "关注成功" : "取消关注",
+        });
+      } catch (e) {
+        this.$notify({
+          type: "danger",
+          message: "操作失败",
+        });
+      }
+    },
+    previewImg() {
+      console.log(this);
+      // 获取所有的img图片
+      //  src属性
+      //  push到一个新的数组里面
+      // 获取到界面所有的图片dom结构
+      const imgs = this.$refs.content.querySelectorAll("img");
+      console.log(imgs);
+      //  存储所有图片的路径数组
+      const images = [];
+
+      // 逻辑错误
+      // 登录401
+      // >> token >> 网络请求
+      // >>
+
+      // 遍历dom结构获取图片链接，存入数组
+      imgs.forEach((item, index) => {
+        images.push(item.src);
+        item.addEventListener("click", function () {
+          // 事件内部开始展示图片预览功能
+          ImagePreview({
+            images: images,
+            startPosition: index, // 指定图片的起始位置 >> 图片的index
+          });
+        });
+      });
+
+      console.log(images);
+    },
     async getArticleDetail() {
       this.loading = true;
       try {
         const res = await getArticleById(this.articleId);
         this.article = res.data.data;
+
+        // 已经成功获取到了数据
+        // 绑定图片预览功能 >> img图片
         this.loading = false;
+        // 因为界面的更新是异步的
+        // 所以修改完数据以后，直接获取最新的dom结构是获取不到的
+        // 需要通过$nextTick在界面更新完毕以后再去获取才可以
+        // $nextTick: 界面更新完毕以后想要拿到最新的dom结构就可以使用这个api
+
+        this.$nextTick(() => {
+          this.previewImg();
+        });
       } catch (e) {
         console.log(e);
         this.loading = false;
         // 判断当前是不是404状态
-        this.isNotFound = e.response.status === 404;
+        console.log(e);
+        this.isNotFound = e?.response?.status === 404;
       }
     },
   },
