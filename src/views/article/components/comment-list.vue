@@ -7,20 +7,22 @@
     :error.sync="error"
     error-text="出错了，点击重试"
   >
-    <van-cell
-      v-for="item in list"
-      :key="item.art_id"
-      :title="item.content"
-    ></van-cell>
+    <comment-item v-for="item in list" :key="item.com_id" :comment="item" />
+    <!--    <van-cell-->
+    <!--      v-for="item in list"-->
+    <!--      :key="item.com_id"-->
+    <!--      :title="item.content"-->
+    <!--    ></van-cell>-->
   </van-list>
 </template>
 <script>
 // console.log(comment);
 import { getComments } from "@/api/comment";
+import CommentItem from "@/views/article/components/comment-item";
 
 export default {
   name: "CommentList",
-  components: {},
+  components: { CommentItem },
   props: {
     source: {
       type: [String, Number],
@@ -50,7 +52,7 @@ export default {
         this.list.push(...res.data.data.results);
         // 请求完数据以后，loading >> false
         this.loading = false;
-        // 说明当前数据的最后一条的id和所有数据最后一条的id相等
+        // 说明当前数据的最后一条的id和所有数据最后一条的id相等 >> 没有数据了
         // end_id：所有数据的最后一条
         if (res.data.data.last_id === res.data.data.end_id) {
           this.finished = true;
