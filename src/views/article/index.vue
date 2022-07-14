@@ -35,10 +35,7 @@
           <div slot="label" class="publish-date">
             {{ article.pubdate | relativeTime }}
           </div>
-          <FollowUser
-            :autId="article.aut_id"
-            :isFollowed="article.is_followed"
-          />
+          <FollowUser :autId="article.aut_id" v-model="article.is_followed" />
         </van-cell>
         <!-- /用户信息 -->
 
@@ -49,15 +46,28 @@
           v-html="article.content"
         ></div>
         <van-divider>正文结束</van-divider>
+
+        <!-- 评论组件-->
+        <comment-list :source="article.art_id" />
+        <!-- 评论组件-->
+
         <!-- 底部区域 -->
         <div class="article-bottom">
           <van-button class="comment-btn" type="default" round size="small">
             写评论
           </van-button>
           <van-icon name="comment-o" :badge="article.comm_count" color="#777" />
-          <van-icon color="#777" name="star-o" />
-          <van-icon color="#777" name="good-job-o" />
-          <van-icon name="share" color="#777777"></van-icon>
+          <!-- 收藏的icon-->
+          <CollectArticle
+            :artId="article.art_id"
+            v-model="article.is_collected"
+          />
+          <like-article v-model="article.attitude" :artId="article.art_id" />
+          <van-icon
+            @click="showShowShare = true"
+            name="share"
+            color="#777777"
+          ></van-icon>
         </div>
         <!-- /底部区域 -->
       </div>
@@ -74,12 +84,16 @@
       <div class="error-wrap" v-else>
         <van-icon name="failure" />
         <p class="text">内容加载失败！</p>
-        <van-button class="retry-btn" @click="getArticleDetail"
-          >点击重试
+        <van-button class="retry-btn" @click="getArticleDetail">
+          点击重试
         </van-button>
       </div>
       <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
     </div>
+
+    <!--      分享面板-->
+    <Share :showShowShare.sync="showShowShare" />
+    <!--      面板-->
   </div>
 </template>
 
@@ -89,6 +103,10 @@ import { getArticleById } from "@/api/article";
 import "github-markdown-css";
 import { ImagePreview } from "vant";
 import FollowUser from "@/views/article/components/follow-user";
+import CollectArticle from "@/views/article/components/collect-article";
+import LikeArticle from "@/views/article/components/like-article";
+import Share from "@/views/article/components/share";
+import CommentList from "@/views/article/components/comment-list";
 
 // yarn add github-markdown-css -S
 // 当前文件通过import 'github-markdown-css' 引入 >> 不需要加路径
@@ -98,7 +116,13 @@ import FollowUser from "@/views/article/components/follow-user";
 
 export default {
   name: "ArticleIndex",
-  components: { FollowUser },
+  components: {
+    CommentList,
+    Share,
+    LikeArticle,
+    CollectArticle,
+    FollowUser,
+  },
   props: {
     // 使用props获取动态路由的数据
     articleId: {
@@ -110,6 +134,7 @@ export default {
     return {
       isNotFound: false, // 标识当前是不是404状态
       loading: false, // 文章加载状态
+      showShowShare: false,
       /**
        * @type {ArticleDetail.Data}
        */
@@ -125,13 +150,12 @@ export default {
   mounted() {},
   methods: {
     previewImg() {
-      console.log(this);
       // 获取所有的img图片
       //  src属性
       //  push到一个新的数组里面
       // 获取到界面所有的图片dom结构
       const imgs = this.$refs.content.querySelectorAll("img");
-      console.log(imgs);
+
       //  存储所有图片的路径数组
       const images = [];
 
@@ -151,8 +175,6 @@ export default {
           });
         });
       });
-
-      console.log(images);
     },
     async getArticleDetail() {
       this.loading = true;
