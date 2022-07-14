@@ -35,25 +35,10 @@
           <div slot="label" class="publish-date">
             {{ article.pubdate | relativeTime }}
           </div>
-          <van-button
-            v-if="!article.is_followed"
-            class="follow-btn"
-            type="info"
-            color="#3296fa"
-            round
-            size="small"
-            icon="plus"
-            @click="follow"
-            >关注
-          </van-button>
-          <van-button
-            @click="follow"
-            v-else
-            class="follow-btn"
-            round
-            size="small"
-            >已关注</van-button
-          >
+          <FollowUser
+            :autId="article.aut_id"
+            :isFollowed="article.is_followed"
+          />
         </van-cell>
         <!-- /用户信息 -->
 
@@ -103,7 +88,7 @@ import { getArticleById } from "@/api/article";
 // 引入美化markdown的样式文件
 import "github-markdown-css";
 import { ImagePreview } from "vant";
-import { addFollow, deleteFollow } from "@/api/user";
+import FollowUser from "@/views/article/components/follow-user";
 
 // yarn add github-markdown-css -S
 // 当前文件通过import 'github-markdown-css' 引入 >> 不需要加路径
@@ -113,7 +98,7 @@ import { addFollow, deleteFollow } from "@/api/user";
 
 export default {
   name: "ArticleIndex",
-  components: {},
+  components: { FollowUser },
   props: {
     // 使用props获取动态路由的数据
     articleId: {
@@ -129,6 +114,7 @@ export default {
        * @type {ArticleDetail.Data}
        */
       article: {}, // 文章对象
+      isFollowLoading: false,
     };
   },
   computed: {},
@@ -138,30 +124,6 @@ export default {
   },
   mounted() {},
   methods: {
-    async follow() {
-      try {
-        // 调用接口，关注/取消关注 当前作者
-        if (this.article.is_followed) {
-          //  取消关注
-          await deleteFollow(this.article.aut_id);
-        } else {
-          //  去关注
-          await addFollow(this.article.aut_id);
-        }
-        // 让当前关注的状态取反 >> 界面响应式更新
-        this.article.is_followed = !this.article.is_followed;
-        // 关注之后进行提示
-        this.$notify({
-          type: "success",
-          message: this.article.is_followed ? "关注成功" : "取消关注",
-        });
-      } catch (e) {
-        this.$notify({
-          type: "danger",
-          message: "操作失败",
-        });
-      }
-    },
     previewImg() {
       console.log(this);
       // 获取所有的img图片

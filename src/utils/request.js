@@ -49,10 +49,10 @@ request.interceptors.request.use(
 
 request.interceptors.response.use(); // 响应拦截器
 
-// 测试接口请求 >>
-request.get("http://localhost:3000/name").then((res) => {
-  console.log(res);
-});
+// // 测试接口请求 >>
+// request.get("http://localhost:3000/name").then((res) => {
+//   console.log(res);
+// });
 
 // app.get("/list", (res, err) => {
 //   res.send({});
