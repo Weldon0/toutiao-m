@@ -15,14 +15,19 @@
         size="small"
         round
         @click="isPostShow = true"
-        >写评论</van-button
       >
+        写评论
+      </van-button>
     </div>
     <!-- /底部区域 -->
 
     <!-- 发布评论 -->
     <van-popup v-model="isPostShow" position="bottom">
-      评论回复评论回复
+      <comment-post
+        @postSuccess="postSuccess"
+        type="c"
+        :target="currentComment.com_id"
+      />
     </van-popup>
     <!-- /发布评论 -->
   </div>
@@ -31,9 +36,10 @@
 <script>
 import CommentItem from "@/views/article/components/comment-item";
 import CommentList from "@/views/article/components/comment-list";
+import CommentPost from "@/views/article/components/comment-post";
 export default {
   name: "CommentReply",
-  components: { CommentList, CommentItem },
+  components: { CommentPost, CommentList, CommentItem },
   props: {
     currentComment: Object,
   },
@@ -47,7 +53,14 @@ export default {
   watch: {},
   created() {},
   mounted() {},
-  methods: {},
+  methods: {
+    postSuccess(comment) {
+      //  发布评论成功以后
+      this.isPostShow = false;
+      this.list.unshift(comment);
+      this.currentComment.reply_count++;
+    },
+  },
 };
 </script>
 <style scoped lang="less">

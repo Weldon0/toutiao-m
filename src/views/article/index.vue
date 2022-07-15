@@ -153,9 +153,9 @@ export default {
     FollowUser,
   },
   provide() {
-    // 提供了一个属性
+    // 父组件提供文章的id
     return {
-      onReplyClick: this.onReplyClick,
+      articleId: this.articleId,
     };
   },
   props: {
