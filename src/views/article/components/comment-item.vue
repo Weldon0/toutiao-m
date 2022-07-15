@@ -9,7 +9,15 @@
     />
     <div slot="title" class="title-wrap">
       <div class="user-name">{{ comment.aut_name }}</div>
-      <van-button class="like-btn" icon="good-job-o">赞</van-button>
+      <van-button
+        class="like-btn"
+        :class="{ active: comment.is_liking }"
+        :icon="comment.is_liking ? 'good-job' : 'good-job-o'"
+        @click="onCommentLike"
+        :loading="loading"
+      >
+        {{ comment.like_count || "赞" }}
+      </van-button>
     </div>
 
     <div slot="label">
@@ -18,7 +26,11 @@
         <span class="comment-pubdate">
           {{ comment.pubdate | relativeTime }}
         </span>
-        <van-button class="reply-btn" round>
+        <van-button
+          @click="$emit('reply-click', comment)"
+          class="reply-btn"
+          round
+        >
           回复 {{ comment.reply_count }}
         </van-button>
       </div>
@@ -27,6 +39,8 @@
 </template>
 
 <script>
+import { addCommentLike, deleteCommentLike } from "@/api/comment";
+
 export default {
   name: "CommentItem",
   props: {
@@ -36,12 +50,51 @@ export default {
       required: true,
     },
   },
-  methods: {},
+  data() {
+    return {
+      loading: false,
+    };
+  },
+  methods: {
+    async onCommentLike() {
+      this.loading = true;
+      //  1、判断当前评论是否已经被点赞
+      //  2、如果已经点赞 -> 取消点赞
+      //  3、相反 >> 去点赞
+      try {
+        if (this.comment.is_liking) {
+          // 取消点赞
+          await deleteCommentLike(this.comment.com_id);
+          this.comment.like_count--;
+        } else {
+          // 去点赞
+          await addCommentLike(this.comment.com_id);
+
+          this.comment.like_count++;
+        }
+
+        this.loading = false;
+
+        //  状态取反
+        this.comment.is_liking = !this.comment.is_liking;
+        this.$toast("操作成功");
+      } catch (e) {
+        this.loading = false;
+      }
+    },
+  },
 };
 </script>
 
 <style scoped lang="less">
 .comment-item {
+  .like-btn {
+    &.active {
+      .van-icon {
+        color: red;
+      }
+    }
+  }
   .avatar {
     width: 72px;
     height: 72px;

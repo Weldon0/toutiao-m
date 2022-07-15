@@ -48,12 +48,22 @@
         <van-divider>正文结束</van-divider>
 
         <!-- 评论组件-->
-        <comment-list :source="article.art_id" />
+        <comment-list
+          @reply-click="onReplyClick"
+          :list="commentList"
+          :source="article.art_id"
+        />
         <!-- 评论组件-->
 
         <!-- 底部区域 -->
         <div class="article-bottom">
-          <van-button class="comment-btn" type="default" round size="small">
+          <van-button
+            class="comment-btn"
+            type="default"
+            round
+            size="small"
+            @click="isPostShow = true"
+          >
             写评论
           </van-button>
           <van-icon name="comment-o" :badge="article.comm_count" color="#777" />
@@ -94,12 +104,28 @@
     <!--      分享面板-->
     <Share :showShowShare.sync="showShowShare" />
     <!--      面板-->
+
+    <!--------------------------------  发布评论 -------------------------------------->
+    <van-popup v-model="isPostShow" position="bottom">
+      <comment-post @postSuccess="postSuccess" :target="article.art_id" />
+    </van-popup>
+    <!-------------------------------- /发布评论 -------------------------------------->
+
+    <!------------------------ 评论回复 ------------------------------>
+    <van-popup v-model="isReplyShow" position="bottom" style="height: 100%">
+      <!-- 通过切换组件v-if来让组件销毁 -->
+      <comment-reply
+        v-if="isReplyShow"
+        @close="isReplyShow = false"
+        :currentComment="currentComment"
+      />
+    </van-popup>
+    <!------------------------ /评论回复 ------------------------------>
   </div>
 </template>
 
 <script>
 import { getArticleById } from "@/api/article";
-// 引入美化markdown的样式文件
 import "github-markdown-css";
 import { ImagePreview } from "vant";
 import FollowUser from "@/views/article/components/follow-user";
@@ -107,21 +133,30 @@ import CollectArticle from "@/views/article/components/collect-article";
 import LikeArticle from "@/views/article/components/like-article";
 import Share from "@/views/article/components/share";
 import CommentList from "@/views/article/components/comment-list";
+import CommentPost from "@/views/article/components/comment-post";
+import CommentReply from "@/views/article/components/comment-reply";
 
 // yarn add github-markdown-css -S
 // 当前文件通过import 'github-markdown-css' 引入 >> 不需要加路径
 // 内容添加类名 markdown-body
 
 // 重启一下
-
 export default {
   name: "ArticleIndex",
   components: {
+    CommentReply,
+    CommentPost,
     CommentList,
     Share,
     LikeArticle,
     CollectArticle,
     FollowUser,
+  },
+  provide() {
+    // 提供了一个属性
+    return {
+      onReplyClick: this.onReplyClick,
+    };
   },
   props: {
     // 使用props获取动态路由的数据
@@ -132,6 +167,7 @@ export default {
   },
   data() {
     return {
+      commentList: [], // 评论列表的数组
       isNotFound: false, // 标识当前是不是404状态
       loading: false, // 文章加载状态
       showShowShare: false,
@@ -140,6 +176,9 @@ export default {
        */
       article: {}, // 文章对象
       isFollowLoading: false,
+      isPostShow: false, // 发布评论弹层控制
+      isReplyShow: false, // 回复弹层是否展示字段
+      currentComment: {},
     };
   },
   computed: {},
@@ -149,6 +188,17 @@ export default {
   },
   mounted() {},
   methods: {
+    onReplyClick(comment) {
+      this.isReplyShow = true;
+      // 把点击了回复的评论项，记录到父组件内部 >> 传递给弹层组件 >> 弹层组件要渲染当前评论项
+      this.currentComment = comment;
+    },
+    postSuccess(data) {
+      //  弹层的标识 >> false
+      // 只需要修改父组件的commentList
+      this.commentList.unshift(data);
+      this.isPostShow = false;
+    },
     previewImg() {
       // 获取所有的img图片
       //  src属性
