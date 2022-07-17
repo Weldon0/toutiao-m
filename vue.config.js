@@ -1,6 +1,7 @@
 const { defineConfig } = require("@vue/cli-service");
 const path = require("path");
 module.exports = defineConfig({
+  publicPath: "./",
   transpileDependencies: true,
   chainWebpack: (config) => {
     // 记住就可以

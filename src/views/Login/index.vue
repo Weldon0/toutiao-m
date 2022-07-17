@@ -45,7 +45,7 @@
           <van-count-down
             @finish="isShowCountDown = false"
             v-if="isShowCountDown"
-            :time="5000"
+            :time="60000"
             format="ss s"
           />
           <van-button
@@ -62,7 +62,6 @@
       </van-field>
       <div style="margin: 16px">
         <van-button block type="info" native-type="submit">登录</van-button>
-        <van-button block type="info" native-type="reset">重置</van-button>
       </div>
     </van-form>
   </div>
@@ -82,7 +81,7 @@ export default {
       isShowCountDown: false, // 是否展示倒计时组件
       user: {
         mobile: "13911111111",
-        code: "24681",
+        code: "246810",
       },
       rules: {
         mobile: [
