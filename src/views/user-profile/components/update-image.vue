@@ -10,6 +10,9 @@
 </template>
 
 <script>
+import "cropperjs/dist/cropper.css";
+import Cropper from "cropperjs";
+import { updateUserPhoto } from "@/api/user";
 export default {
   name: "UpdatePhoto",
   components: {},
@@ -26,10 +29,42 @@ export default {
   computed: {},
   watch: {},
   created() {},
-  mounted() {},
+  mounted() {
+    const img = this.$refs.img;
+    this.cropper = new Cropper(img, {
+      viewMode: 1,
+      dragMode: "move",
+      aspectRatio: 1,
+      // autoCropArea: 1,
+      cropBoxMovable: false,
+      cropBoxResizable: false,
+      background: false,
+    });
+  },
   methods: {
     // 确定事件
-    onConfirm() {},
+    onConfirm() {
+      this.cropper.getCroppedCanvas().toBlob((blob) => {
+        this.updatePhoto(blob); // 裁剪后的结果信息
+      });
+    },
+    // 上传文件的方法
+    async updatePhoto(blob) {
+      // photo
+      // 怎么样定义成formData格式
+      // axios >> 根据你的参数的形式自动设置的ContentType
+      // 查询字符串(name=xx&age=18) >> application/x-www-form-urlencoded
+      // object >> application/json
+      // formData >> multipart/form-data; boundary=----WebKitFormBoundaryGnwmBAvekLZAnBt2
+
+      // 文件怎么上传的？
+      // 构建一个formData对象
+      const fd = new FormData();
+      fd.append("photo", blob);
+      const res = await updateUserPhoto(fd);
+      this.$emit("input", res.data.data.photo);
+      this.$emit("close");
+    },
   },
 };
 </script>

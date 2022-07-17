@@ -44,7 +44,11 @@
       />
     </van-popup>
     <van-popup position="bottom" style="height: 100%" v-model="isShowImage">
-      <UpdatePhoto :img="img" />
+      <UpdatePhoto
+        v-model="userInfo.photo"
+        @close="isShowImage = false"
+        :img="img"
+      />
     </van-popup>
   </div>
 </template>
