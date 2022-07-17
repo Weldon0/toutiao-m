@@ -15,16 +15,13 @@
       <!-- 基本信息 -->
       <div class="base-info">
         <div class="left">
-          <van-image
-            fit="cover"
-            src="https://img.yzcdn.cn/vant/cat.jpeg"
-            class="avatar"
-            round
-          />
-          <span class="name">黑马头条</span>
+          <van-image fit="cover" :src="userInfo.photo" class="avatar" round />
+          <span class="name">{{ userInfo.name }}</span>
         </div>
         <div class="right">
-          <van-button type="default" size="mini" round>编辑资料</van-button>
+          <van-button to="/user/profile" type="default" size="mini" round>
+            编辑资料
+          </van-button>
         </div>
       </div>
       <!-- 粉丝、关注 -->

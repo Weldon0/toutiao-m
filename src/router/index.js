@@ -57,6 +57,10 @@ const routes = [
     // 将路由动态参数映射到组件的 props 中，更推荐这种做法
     props: true,
   },
+  {
+    path: "/user/profile",
+    component: () => import("@/views/user-profile/index.vue"),
+  },
 ];
 
 // 登录的组件和路由

@@ -61,3 +61,19 @@ declare module ArticleDetail {
     like_count: number;
   }
 }
+
+declare module UserInfo {
+  interface RootObject {
+    data: Data;
+    message: string;
+  }
+  interface Data {
+    id: string;
+    photo: string;
+    name: string;
+    mobile: string;
+    gender: number;
+    birthday: string; // 生日
+    intro?: any;
+  }
+}
